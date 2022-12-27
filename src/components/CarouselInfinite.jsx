@@ -26,6 +26,7 @@ const Item = forwardRef(({ data }, ref) => {
     </div>
   );
 });
+Item.displayName = "Item";
 
 const Container = ({ datas, current }) => {
   const [prev, setPrev] = useState(current);
