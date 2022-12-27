@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useRef, useState } from "react";
+import React, { forwardRef, memo, useCallback, useEffect, useRef, useState } from "react";
 import styles from "../styles/Carousel.module.css";
 
 const Controller = memo(({ onClickNext, onClickPrev }) => {
@@ -15,14 +15,22 @@ const Controller = memo(({ onClickNext, onClickPrev }) => {
 });
 Controller.displayName = "Controller";
 
+const Item = forwardRef(({ data }, ref) => {
+  const onTransitionEnd = (e) => {
+    e.target.style.opacity = "1";
+  };
+
+  return (
+    <div className={styles.item_infinite} onTransitionEnd={onTransitionEnd} ref={ref}>
+      <div className={styles.item__content}>{data}</div>
+    </div>
+  );
+});
+
 const Container = ({ datas, current }) => {
   const [prev, setPrev] = useState(current);
   const itemsRefs = useRef([]);
   const [positions, setPositions] = useState(!!datas ? Array.from({ length: datas.length }, () => 0) : []);
-
-  const onTransitionEnd = (e) => {
-    e.target.style.opacity = "1";
-  };
 
   useEffect(() => {
     const outIndex = datas.length - 1;
@@ -68,12 +76,7 @@ const Container = ({ datas, current }) => {
   return (
     <div id={styles.container}>
       <div id={styles.items_infinite}>
-        {datas &&
-          datas.map((v, i) => (
-            <div key={`${v}_${i}`} className={styles.item_infinite} ref={(el) => (itemsRefs.current[i] = el)} onTransitionEnd={onTransitionEnd}>
-              <div className={styles.item__content}>{v}</div>
-            </div>
-          ))}
+        {datas && datas.map((v, i) => <Item key={`${v}_${i}`} data={v} index={i} ref={(el) => (itemsRefs.current[i] = el)} />)}
       </div>
     </div>
   );

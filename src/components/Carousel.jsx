@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { forwardRef, useLayoutEffect, useRef, useState } from "react";
 import styles from "../styles/Carousel.module.css";
 
 const Controller = ({ datas, current, set, onClickNext, onClickPrev }) => {
@@ -22,6 +22,14 @@ const Controller = ({ datas, current, set, onClickNext, onClickPrev }) => {
   );
 };
 
+const Item = forwardRef(({ data }, ref) => {
+  return (
+    <div className={styles.item} ref={ref}>
+      <div className={styles.item__content}>{data}</div>
+    </div>
+  );
+});
+
 const Container = ({ datas, current }) => {
   const itemsRef = useRef(null);
 
@@ -34,12 +42,7 @@ const Container = ({ datas, current }) => {
   return (
     <div id={styles.container}>
       <div id={styles.items} ref={itemsRef}>
-        {datas &&
-          datas.map((v, i) => (
-            <div key={`${v}_${i}`} className={styles.item}>
-              <div className={styles.item__content}>{v}</div>
-            </div>
-          ))}
+        {datas && datas.map((v, i) => <Item key={`${v}_${i}`} data={v} />)}
       </div>
     </div>
   );
